@@ -1,0 +1,12 @@
+OmniEvolve
+Copyright 2026 The OmniEvolve Authors
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+OmniEvolve is the open-source, local Python engine of the OmniSI evolutionary optimization
+platform. The hosted OmniSI Cloud service and its Rust engine are separate, proprietary
+software and are not part of this distribution.
+
+"OmniEvolve" and "OmniSI" are names of their owners. The Apache License does not grant
+permission to use them, except as required for describing the origin of the work
+(License section 6).

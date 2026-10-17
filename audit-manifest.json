@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "package": "omnievolve",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "license_file": "LICENSE",
+  "license_sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+  "public_repository": "https://github.com/omnirogue/omnievolve",
+  "rust_included": false,
+  "language": "Python 3.10+",
+  "runtime_dependencies": [],
+  "optional_dependencies": {
+    "yaml": [
+      "PyYAML>=6"
+    ],
+    "dev": [
+      "pytest>=7",
+      "ruff>=0.5",
+      "build>=1"
+    ]
+  },
+  "supersedes": {
+    "package": "omnisi-evolve",
+    "note": "The open-source release of OmniSI Evolve is this Python package. The Rust engine (Pareto frontier, novelty archive, swap-order judge calibration, sequential early stopping, SHA-256 audit bundles) stays private and is offered only through OmniSI Cloud."
+  },
+  "approval": {
+    "decision": "D2/D3 open-source scope and license",
+    "terms": "Open-source reusable intelligence infrastructure under Apache-2.0 only (not dual MIT/Apache-2.0). Proprietary customer data, internal evaluation rubrics, business logic and competitive advantages stay private.",
+    "scope": "Release instruction of 2026-10-16: publish the Python local engine at https://github.com/omnirogue/omnievolve and export no Rust code."
+  },
+  "audit": {
+    "date": "2026-10-16",
+    "method": "Automated scan (oss/verify_apache2_and_scrub.sh omnievolve, including the rust_included check) and scripts/release_check.py; manual review of every file for internal domains and hostnames, credential patterns, proprietary prompts and rubrics, and license declarations; the unit suite and an end-to-end example run from a clean standalone copy.",
+    "publication_ready": false
+  },
+  "included_crates": [],
+  "included_sources": [],
+  "package_files": [
+    ".github/workflows/ci.yml",
+    ".gitignore",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "LICENSE",
+    "NOTICE",
+    "README.md",
+    "SECURITY.md",
+    "audit-manifest.json",
+    "examples/heuristic_tuning/README.md",
+    "examples/heuristic_tuning/evaluate.py",
+    "examples/heuristic_tuning/omnievolve.json",
+    "examples/heuristic_tuning/triage.py",
+    "examples/prompt_evolution/README.md",
+    "examples/prompt_evolution/evaluate.py",
+    "examples/prompt_evolution/mutation_pool.txt",
+    "examples/prompt_evolution/omnievolve.json",
+    "examples/prompt_evolution/system_prompt.txt",
+    "omnievolve/__init__.py",
+    "omnievolve/__main__.py",
+    "omnievolve/_version.py",
+    "omnievolve/cli.py",
+    "omnievolve/cloud.py",
+    "omnievolve/config.py",
+    "omnievolve/engine.py",
+    "omnievolve/evaluators.py",
+    "omnievolve/ledger.py",
+    "omnievolve/llm.py",
+    "omnievolve/mcp_server.py",
+    "omnievolve/mutators.py",
+    "omnievolve/py.typed",
+    "omnievolve/report.py",
+    "omnievolve/runner.py",
+    "omnievolve/templates.py",
+    "pyproject.toml",
+    "scripts/release_check.py",
+    "tests/_support.py",
+    "tests/test_cli.py",
+    "tests/test_cloud.py",
+    "tests/test_engine.py",
+    "tests/test_evaluators.py",
+    "tests/test_ledger_report.py",
+    "tests/test_llm.py",
+    "tests/test_mcp.py",
+    "tests/test_mutators.py",
+    "tests/test_release.py"
+  ],
+  "excluded_private_assets": [
+    {
+      "asset": "The OmniRogue Rust Engine: Pareto-frontier selection, novelty archive, swap-order judge calibration, sequential early stopping, SHA-256 audit bundles, the hosted service and its CLI and MCP transport",
+      "path": "private OmniSI Cloud source",
+      "reason": "Competitive advantage; offered only as the hosted OmniSI Cloud service."
+    },
+    {
+      "asset": "Production run specs, sealed internal rubrics and customer replay items",
+      "path": "hosted OmniSI Cloud data",
+      "reason": "Internal evaluation rubrics and customer data."
+    },
+    {
+      "asset": "Proprietary generator and mutation prompts",
+      "path": "hosted OmniSI Cloud",
+      "reason": "Competitive advantage. The LLM mutator and judge prompts in this package were written for it."
+    },
+    {
+      "asset": "Provider credentials, budget limits and pricing",
+      "path": "environment variables and hosted configuration",
+      "reason": "Secrets and business logic."
+    }
+  ],
+  "release_blockers": [
+    {
+      "id": "release-approval",
+      "path": "audit-manifest.json",
+      "finding": "Nobody has yet reviewed the staged repository or approved creating github.com/omnirogue/omnievolve and pushing to it.",
+      "required_fix": "A maintainer reviews the staged repository, sets publication_ready to true and removes this blocker; then the repository is created and pushed."
+    }
+  ],
+  "verification": {
+    "command": "python3 scripts/release_check.py && python3 -m unittest discover -s tests",
+    "monorepo_command": "bash oss/verify_apache2_and_scrub.sh omnievolve",
+    "verified": [
+      "2026-10-16, macOS, Python 3.12.1: all 65 tests in tests/ pass; ruff 0.16.1 check and format are clean; every module parses and the package imports on Python 3.10 and 3.13.",
+      "From a clean standalone copy of this directory, PYTHONPATH=<copy> python3 -m omnievolve run --config examples/heuristic_tuning/omnievolve.json --generations 5: F1 rose from 0.553571 (seed) to 0.739796 in under a second; the ledger held 1 run, 63 candidates, 66 lineage edges, 12 generation rows and 2 islands; leaderboard, report (two inline SVG charts, no scripts or external resources) and export-winner succeeded; the exported patch applied with git apply and the patched triage.py re-scored 0.739796.",
+      "examples/prompt_evolution with its own settings: 0.660714 (seed) to 0.958929 in 10 generations.",
+      "bash oss/verify_apache2_and_scrub.sh omnievolve and --self-test pass, including the rust_included check and the public-name allowlist cases; scripts/release_check.py passes; the package contains no .rs, Cargo.toml or Cargo.lock file."
+    ],
+    "unverified": [
+      "The CI workflow has not run on GitHub Actions: the public repository does not exist yet.",
+      "The LLM mutator and judge were tested against recorded provider response shapes only; no live OpenAI, Anthropic, Gemini or Ollama call was made.",
+      "The OmniSI Cloud bridge was tested with a fake transport and --dry-run; it has not been run against a live OmniSI Cloud endpoint.",
+      "Windows is untested."
+    ]
+  }
+}

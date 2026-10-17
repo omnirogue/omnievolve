@@ -1,0 +1,81 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 The OmniEvolve Authors
+#
+# Tests on every supported Python, release hygiene, an end-to-end example run, and on a tag a
+# wheel and sdist uploaded as workflow artifacts. Nothing is published to a package registry.
+name: ci
+on:
+  pull_request:
+  push:
+    branches: [main]
+    tags: ['v*']
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python: ['3.10', '3.11', '3.12', '3.13']
+        include:
+          - os: macos-latest
+            python: '3.12'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m unittest discover -s tests -v
+      - name: Example run end to end
+        run: |
+          python -m omnievolve run --config examples/heuristic_tuning/omnievolve.json \
+            --generations 5 --ledger "$RUNNER_TEMP/ledger.db" --html "$RUNNER_TEMP/report.html" --json
+          python -m omnievolve leaderboard --ledger "$RUNNER_TEMP/ledger.db"
+          python -m omnievolve export-winner --ledger "$RUNNER_TEMP/ledger.db" --output "$RUNNER_TEMP/best.patch"
+          test -s "$RUNNER_TEMP/best.patch"
+          python -m omnievolve run --config examples/prompt_evolution/omnievolve.json \
+            --generations 3 --ledger "$RUNNER_TEMP/prompt.db" --quiet
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python scripts/release_check.py
+      - run: pip install 'ruff==0.16.1'
+      - run: ruff check . && ruff format --check .
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install build
+      - run: python -m build
+      - name: Install the wheel and run the entry points
+        run: |
+          python -m venv /tmp/venv
+          /tmp/venv/bin/pip install dist/*.whl
+          /tmp/venv/bin/omnievolve --version
+          /tmp/venv/bin/omnievolve-mcp --version
+          /tmp/venv/bin/omnievolve init /tmp/starter
+          /tmp/venv/bin/omnievolve run --config /tmp/starter/omnievolve.json --generations 2 --quiet
+  release:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [test, audit, package]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python scripts/release_check.py
+      - run: pip install build && python -m build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: omnievolve-dist
+          path: dist/

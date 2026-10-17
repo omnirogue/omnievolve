@@ -1,0 +1,25 @@
+{
+  "name": "ticket-triage-heuristic",
+  "description": "Tune the weights and threshold of a support-ticket triage heuristic (F1 on 600 synthetic tickets).",
+  "target": "triage.py",
+  "evaluator": {
+    "type": "subprocess",
+    "command": ["{python}", "evaluate.py", "{candidate}"],
+    "timeout_seconds": 10
+  },
+  "mutator": {"type": "deterministic", "sigma": 0.6, "max_changes": 3},
+  "search": {
+    "generations": 8,
+    "islands": 2,
+    "population": 6,
+    "elite": 1,
+    "tournament_size": 3,
+    "crossover_rate": 0.25,
+    "migration_interval": 3,
+    "migration_size": 1,
+    "seed": 7,
+    "workers": 4
+  },
+  "objective": "maximize",
+  "ledger": ".omnievolve/ledger.db"
+}

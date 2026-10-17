@@ -1,0 +1,73 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 The OmniEvolve Authors
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "omnievolve"
+version = "0.1.0"
+description = "Local-first evolutionary optimization for code and prompts: island-model search, pluggable evaluators, a SQLite lineage ledger, HTML reports and an MCP server."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+authors = [{ name = "The OmniEvolve Authors" }]
+keywords = [
+    "evolutionary-algorithms",
+    "genetic-programming",
+    "program-synthesis",
+    "prompt-optimization",
+    "llm",
+    "mcp",
+    "hyperparameter-tuning",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: POSIX",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Libraries",
+    "Typing :: Typed",
+]
+# The engine, evaluators, ledger, report, LLM client and MCP server use the standard library only.
+dependencies = []
+
+[project.optional-dependencies]
+yaml = ["PyYAML>=6"]
+dev = ["pytest>=7", "ruff>=0.5", "build>=1"]
+
+[project.urls]
+Homepage = "https://github.com/omnirogue/omnievolve"
+Repository = "https://github.com/omnirogue/omnievolve"
+Issues = "https://github.com/omnirogue/omnievolve/issues"
+Changelog = "https://github.com/omnirogue/omnievolve/blob/main/CHANGELOG.md"
+
+[project.scripts]
+omnievolve = "omnievolve.cli:main"
+omnievolve-mcp = "omnievolve.mcp_server:main"
+
+[tool.setuptools]
+packages = ["omnievolve"]
+
+[tool.setuptools.package-data]
+omnievolve = ["py.typed"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["UP007"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

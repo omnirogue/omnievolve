@@ -1,0 +1,29 @@
+{
+  "name": "support-system-prompt",
+  "description": "Evolve a customer-support system prompt against a synthetic test suite (offline, deterministic).",
+  "target": "system_prompt.txt",
+  "evaluator": {
+    "type": "subprocess",
+    "command": ["{python}", "evaluate.py", "{candidate}"],
+    "timeout_seconds": 10
+  },
+  "mutator": {
+    "type": "deterministic",
+    "line_pool": "mutation_pool.txt",
+    "numeric_rate": 0.0
+  },
+  "search": {
+    "generations": 10,
+    "islands": 2,
+    "population": 8,
+    "elite": 2,
+    "tournament_size": 3,
+    "crossover_rate": 0.3,
+    "migration_interval": 3,
+    "migration_size": 1,
+    "seed": 11,
+    "workers": 4
+  },
+  "objective": "maximize",
+  "ledger": ".omnievolve/ledger.db"
+}
